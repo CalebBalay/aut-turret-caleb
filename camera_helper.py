@@ -8,6 +8,6 @@ class CameraHelper:
         self.focal_length = (marker[1][0] * self.distance) / self.width
 
     def get_distance(self, pwidth):
-        return (self.width * focalLength) / pwidth
+        return (self.width * self.focal_length) / pwidth
 
         
