@@ -14,9 +14,14 @@ class ImageDetection:
     def detect_face(self, img):
         if img is not None:
             img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            return face_cascade.detectMultiScale(gray, 1.3, 5)
+            return self.fcs.detectMultiScale(img_grey, 1.3, 5)
         return None
-
+    def detect_eyes(self, img):
+        if img is not None:
+            img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            return self.ecs.detectMultiScale(img_grey)
+        return None
+    
 
 
 
