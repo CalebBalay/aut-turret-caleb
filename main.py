@@ -43,6 +43,7 @@ while 1:
         
         theta = get_angle(int(dimensions[0]), int(dimensions[1]), x, y)
         mag = get_magnitude(int(dimensions[0]), int(dimensions[1]), x, y)
+
         cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), \
                  (int(mag*cos(theta) + int(dimensions[0]/2)), \
                   -int(mag*sin(theta)) + int(dimensions[1]/2)), (0, 0, 0), 2)
