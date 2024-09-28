@@ -49,4 +49,3 @@ while True:
     
 capture.release()
 cv.destroyAllWindows()
-

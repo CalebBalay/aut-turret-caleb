@@ -7,7 +7,7 @@ def get_magnitude(width, height, ex, ey):
     return sqrt((ex - width / 2) ** 2 + (ey - height / 2) ** 2)
 
 def get_angle(width, height, ex, ey):
-    sine = abs(ey - height / 2) / get_difference(width, height, ex, ey)
+    sine = abs(ey - height / 2) / get_magnitude(width, height, ex, ey)
     return asin(sine) + pi if x < width / 2 and y > height / 2 else \
             -asin(sine) + pi if x < width / 2 else \
                 -asin(sine) + 2 * pi if y > height / 2 else asin(sine)
@@ -43,7 +43,10 @@ while 1:
         
         theta = get_angle(int(dimensions[0]), int(dimensions[1]), x, y)
         mag = get_magnitude(int(dimensions[0]), int(dimensions[1]), x, y)
-        cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), (int(mag*cos(theta)), int(mag*sin(theta))), (0, 0, 0), 2)
+
+        cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), \
+                 (int(mag*cos(theta) + int(dimensions[0]/2)), \
+                  -int(mag*sin(theta)) + int(dimensions[1]/2)), (0, 0, 0), 2)
 
         #point = (x + (w/2), y + (h/2))
         #cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), (int(point[0]), int(point[1])), (0, 0, 0), 2)
@@ -58,4 +61,3 @@ while 1:
 
 camera.release()
 del detector
-
