@@ -6,7 +6,7 @@ detector = ImageDetection()
 
 while 1:
     ret, img = camera.read()
-    face = ImageDetection.detect_face(img)
+    face = ImageDetection.detect_face(detector, img)
 
     cv2.imshow('img', img)
 
