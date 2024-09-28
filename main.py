@@ -7,7 +7,10 @@ def get_magnitude(width, height, ex, ey):
     return sqrt((ex - width / 2) ** 2 + (ey - height / 2) ** 2)
 
 def get_angle(width, height, ex, ey):
-    return atan((ex - width/2) / (ey - height/2)) 
+    sine = abs(ey - height / 2) / get_difference(width, height, ex, ey)
+    return asin(sine) + pi if x < width / 2 and y > height / 2 else \
+            -asin(sine) + pi if x < width / 2 else \
+                -asin(sine) + 2 * pi if y > height / 2 else asin(sine)
 
 camera = cv2.VideoCapture(0)
 detector = ImageDetection()
@@ -26,7 +29,9 @@ while 1:
                   int(height / 2 + 10)),
                   (255,255,0),2) 
     if len(face) != 0:
-        print(f"distance is {get_difference(width, height, face[0][0] + , face[0][1])}")'''
+        print(face)
+        print(f"distance is {get_difference(width, height, face[0][0], face[0][1])}")
+        print(f"angle is {get_angle(width, height, face[0][0], face[0][1])}")'''
     
     if len(face) > 0:
         (x, y, w, h) = face[0]
@@ -45,7 +50,6 @@ while 1:
 
 
     cv2.circle(img, (int(dimensions[0]/2), int(dimensions[1]/2)), int(dimensions[1]/2), (0, 255, 0), 2)
-      
     cv2.imshow('img', img)
     
     k = cv2.waitKey(30) & 0xff
