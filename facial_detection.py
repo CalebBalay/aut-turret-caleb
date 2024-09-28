@@ -16,6 +16,7 @@ class ImageDetection:
             img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             return self.fcs.detectMultiScale(img_grey, 1.3, 5)
         return None
+
     def detect_eyes(self, img):
         if img is not None:
             img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
