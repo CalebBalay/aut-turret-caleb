@@ -45,7 +45,7 @@ while 1:
         mag = get_magnitude(int(dimensions[0]), int(dimensions[1]), x, y)
         cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), \
                  (int(mag*cos(theta) + int(dimensions[0]/2)), \
-                  -int(mag*sin(theta)) + int(dimensions[1]/2)), (0, 0, 0), 2)
+                  -int(mag*sin(theta)) + int(dimensions[1]/2)), (0, 0, 0), 3)
 
         #point = (x + (w/2), y + (h/2))
         #cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), (int(point[0]), int(point[1])), (0, 0, 0), 2)
