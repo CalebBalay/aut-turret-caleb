@@ -1,4 +1,5 @@
 from facial_detection import ImageDetection
+from color_detection import ColorDetection
 import cv2
 import time
 from math import *
@@ -14,6 +15,7 @@ def get_angle(width, height, ex, ey):
 
 camera = cv2.VideoCapture(0)
 detector = ImageDetection()
+color = ColorDetection()
 
 dimensions = (camera.get(cv2.CAP_PROP_FRAME_WIDTH), camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -21,6 +23,7 @@ while 1:
     ret, img = camera.read()
     face = ImageDetection.detect_face(detector, img)
     eyes = ImageDetection.detect_eyes(detector, img)
+    is_orange = ColorDetection.detect_orange(color, img) 
 
     '''for (x,y,w,h) in face:
         # To draw a rectangle in a face 
