@@ -1,7 +1,7 @@
 from facial_detection import ImageDetection
-from color_detection import ColorDetection
 import cv2
 import time
+import serial
 from math import *
 
 def get_magnitude(width, height, ex, ey):
@@ -15,47 +15,69 @@ def get_angle(width, height, ex, ey):
 
 camera = cv2.VideoCapture(0)
 detector = ImageDetection()
-color = ColorDetection()
 
 dimensions = (camera.get(cv2.CAP_PROP_FRAME_WIDTH), camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+ser = serial.Serial('COM9', 9600, timeout=.1)
+xMinAbs = 0
+yMinAbs = 0
+xMinAbs = 180
+yMinAbs = 180
+xMinCam = 30
+yMinCam = 95
+xMaxCam = 120
+yMaxCam = 135
+turX = (xMaxCam - xMinCam) / 2 + xMinCam
+turY = (yMaxCam - yMinCam) / 2 + yMinCam
+rate = 5
+buffer = 20
 
 while 1:
     ret, img = camera.read()
     face = ImageDetection.detect_face(detector, img)
     eyes = ImageDetection.detect_eyes(detector, img)
-    is_orange = ColorDetection.detect_orange(color, img) 
 
-    '''for (x,y,w,h) in face:
-        # To draw a rectangle in a face 
-        cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),2)
-    cv2.rectangle(img, (int(width / 2), int(height / 2)), (int(width / 2 + 10), 
-                  int(height / 2 + 10)),
-                  (255,255,0),2) 
-    if len(face) != 0:
-        print(face)
-        print(f"distance is {get_difference(width, height, face[0][0], face[0][1])}")
-        print(f"angle is {get_angle(width, height, face[0][0], face[0][1])}")'''
-    
-    if len(face) > 0:
+    (x,y,w,h) = (0,0,0,0)
+    if len(face) == 1:
         (x, y, w, h) = face[0]
-        cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (255, 0, 0), 2)
 
-    if len(eyes) > 0:
-        (x, y, w, h) = eyes[0]
-        cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (0, 0, 255), 2)
-        
-        theta = get_angle(int(dimensions[0]), int(dimensions[1]), x, y)
-        mag = get_magnitude(int(dimensions[0]), int(dimensions[1]), x, y)
-
-        cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), \
-                 (int(mag*cos(theta) + int(dimensions[0]/2)), \
-                  -int(mag*sin(theta)) + int(dimensions[1]/2)), (0, 0, 0), 2)
-
-        #point = (x + (w/2), y + (h/2))
-        #cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), (int(point[0]), int(point[1])), (0, 0, 0), 2)
-
-
-    cv2.circle(img, (int(dimensions[0]/2), int(dimensions[1]/2)), int(dimensions[1]/2), (0, 255, 0), 2)
+        if len(eyes) > 0:
+            (x, y, w, h) = eyes[0]
+            cv2.rectangle(img, (int(x), int(y)), (int(x+w), int(y+h)), (0, 0, 255), 2)
+            
+            theta = get_angle(int(dimensions[0]), int(dimensions[1]), x, y)
+            mag = get_magnitude(int(dimensions[0]), int(dimensions[1]), x, y)
+    
+            cv2.line(img, (int(dimensions[0]/2), int(dimensions[1]/2)), \
+                      (int(mag*cos(theta) + int(dimensions[0]/2)), \
+                      -int(mag*sin(theta)) + int(dimensions[1]/2)), (0, 0, 0), 2)
+            ratx = x / dimensions[0]
+            raty = y / dimensions[1]
+            difx = xMaxCam - xMinCam
+            dify = yMaxCam - yMinCam
+            while 1:
+                print(f"x:{turX}, y:{turY}")
+                if turX < ratx * difx + xMinCam:
+                    ser.write('b'.encode())
+                    turX += rate
+                elif turX > ratx * difx + xMinCam:
+                    ser.write('a'.encode())
+                    turX -= rate
+                if turX >= ratx * difx + xMinCam - buffer and\
+                    turX <= ratx * difx + xMinCam + buffer:
+                    break
+            while 1:
+                if turY < raty * dify + yMinCam:
+                    ser.write('c'.encode())
+                    turY += rate
+                elif turY > raty * dify + yMinCam:
+                    ser.write('d'.encode())
+                    turY -= rate
+                if turY >= raty * dify + yMinCam - buffer and\
+                    turY <= raty * dify + yMinCam + buffer:
+                        break
+                print(f"x:{turX}, y:{turY}")
+                
     cv2.imshow('img', img)
     
     k = cv2.waitKey(30) & 0xff
